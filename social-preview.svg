@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<title id="title">ゲーム棚シェア</title>
+<desc id="desc">持っているゲームを登録して、友達と一緒に遊べるゲームを探すアプリ</desc>
+<rect width="1200" height="630" fill="#f7f4f6"/>
+<rect width="1200" height="382" fill="#ff4d3d"/>
+<circle cx="1080" cy="74" r="210" fill="#f86a5d" opacity=".55"/>
+<circle cx="1170" cy="312" r="146" fill="#eb4035" opacity=".58"/>
+<g font-family="Arial, 'Noto Sans JP', sans-serif">
+  <text x="90" y="145" fill="#fff" font-size="28" font-weight="700" letter-spacing="4">友達とゲームを探そう</text>
+  <text x="86" y="244" fill="#fff" font-size="76" font-weight="800">ゲーム棚シェア</text>
+  <text x="92" y="302" fill="#fff" font-size="27" font-weight="500">持っているゲームを比べて、今夜遊ぶ一本を見つけよう。</text>
+  <text x="92" y="348" fill="#fff" font-size="21" font-weight="500" opacity=".94">棚コードを交換するだけで、一緒に遊べるゲームがわかります。</text>
+  <text x="90" y="452" fill="#4a4147" font-size="22" font-weight="700">いっしょに遊べるゲーム</text>
+</g>
+<g transform="translate(90 480)">
+  <rect width="226" height="105" rx="18" fill="#ff5a3c"/>
+  <rect x="250" width="226" height="105" rx="18" fill="#2f5bff"/>
+  <rect x="500" width="226" height="105" rx="18" fill="#e09a00"/>
+  <rect x="750" width="226" height="105" rx="18" fill="#0f9d6b"/>
+  <g fill="#fff" opacity=".94">
+    <circle cx="185" cy="30" r="11"/><circle cx="209" cy="30" r="11"/>
+    <circle cx="435" cy="30" r="11"/><circle cx="459" cy="30" r="11"/>
+    <circle cx="685" cy="30" r="11"/><circle cx="709" cy="30" r="11"/>
+    <circle cx="935" cy="30" r="11"/><circle cx="959" cy="30" r="11"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#fff" letter-spacing="2">
+    <text x="22" y="54">CO-OP</text><text x="272" y="54">ONLINE</text>
+    <text x="522" y="54">PARTY</text><text x="772" y="54">GAME NIGHT</text>
+  </g>
+  <g fill="#fff" opacity=".26">
+    <rect x="22" y="68" width="156" height="12" rx="6"/>
+    <rect x="272" y="68" width="156" height="12" rx="6"/>
+    <rect x="522" y="68" width="156" height="12" rx="6"/>
+    <rect x="772" y="68" width="156" height="12" rx="6"/>
+  </g>
+</g>
+</svg>
