@@ -64,6 +64,10 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .seed{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff3cf;color:#5c3b00;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700}
 .seed[hidden],.invite[hidden]{display:none}
 .seed button{min-height:36px;font-size:13px;background:#fff;color:#5c3b00;border-color:#e8b63d}
+.pfrow{display:flex;flex-wrap:wrap;gap:6px}
+.pfrow button{min-height:40px;padding:0 12px;border-radius:999px;background:#fff;color:#1c1a1f;border-color:#e7e2e6;font-size:14px}
+.pfrow button[aria-pressed=true]{background:#1c1a1f;color:#fff;border-color:#1c1a1f}
+.pick-row.off .pick{opacity:.45}
 .stale{color:#b42318 !important;font-weight:700}
 .invite{background:var(--ink);color:var(--bg)}
 .invite .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
@@ -161,6 +165,8 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
     <div class="me">
       <label for="myname">自分の名前</label>
       <input id="myname" maxlength="20" placeholder="例: はると" autocomplete="nickname">
+      <label id="pflabel">持ってる機種（選ぶと、機種が合わないゲームを分けて表示します）</label>
+      <div class="pfrow" id="mypf" role="group" aria-labelledby="pflabel"><button type="button" data-pf="P" aria-pressed="false">PC</button><button type="button" data-pf="S" aria-pressed="false">PlayStation</button><button type="button" data-pf="X" aria-pressed="false">Xbox</button><button type="button" data-pf="N" aria-pressed="false">Switch</button><button type="button" data-pf="M" aria-pressed="false">スマホ</button></div>
       <label for="mycode">自分の棚コード（相手に送る）</label>
       <div class="coderow">
         <input id="mycode" readonly aria-label="自分の棚コード">
@@ -195,6 +201,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
     <div id="together"></div>
     <div id="almost"></div>
     <div id="over"></div>
+    <div id="plat"></div>
   </div>
 </section>
 
@@ -293,6 +300,9 @@ const P=[
 [50,'Lovers in a Dangerous Spacetime','ラバーズインアデンジャラススペースタイム',1,4,'c','PSXN','coop'],
 [51,'PICO PARK 2','ピコパーク2',2,8,'oc','PN','party'],[52,'Party Animals','パーティーアニマルズ',1,8,'oc','PX','party'],[53,'PlateUp!','プレートアップ',1,4,'oc','PSXN','party'],[54,'Content Warning','コンテントワーニング',2,4,'o','P','act'],[55,'Sons Of The Forest','サンズオブザフォレスト',1,8,'o','P','craft'],[56,'Schedule I','スケジュールワン',1,4,'o','P','craft'],[57,'RV There Yet?','アールブイゼアイェット',1,4,'o','P','party'],[58,'No Man’s Sky','ノーマンズスカイ',1,4,'o','PSXN','craft'],[59,'Rocket League','ロケットリーグ',1,8,'oc','PSXN','vs'],[60,'Marvel Rivals','マーベルライバルズ',1,6,'o','PSX','vs'],[61,'Counter-Strike 2','カウンターストライク2|cs2',1,10,'o','P','vs'],[62,'Destiny 2','デスティニー2',1,6,'o','PSX','act'],[63,'Pummel Party','パメルパーティー',1,8,'oc','P','party'],[64,'Risk of Rain 2','リスクオブレイン2|ror2',1,4,'o','PSXN','act'],[65,'The Forest','ザフォレスト',1,8,'o','PS','craft'],[66,'Grounded 2','グラウンデッド2',1,4,'o','PX','craft'],[67,'Satisfactory','サティスファクトリー',1,4,'o','P','craft'],[68,'Warframe','ウォーフレーム',1,4,'o','PSXN','act'],[69,'Unrailed! 2: Back on Track','アンレイルド2',1,4,'oc','P','coop'],[70,'Dinkum','ディンカム',1,4,'o','P','craft'],[71,'Escape Simulator 2','エスケープシミュレーター2',1,8,'o','P','coop'],[72,'Brawlhalla','ブロウルハラ',1,8,'oc','PSXNM','vs'],[73,'Left 4 Dead 2','レフトフォーデッド2|l4d2',1,4,'o','P','act'],[74,'Team Fortress 2','チームフォートレス2|tf2',1,6,'o','P','vs'],[75,'Garry’s Mod','ギャリーズモッド|gmod',1,16,'o','P','party'],[76,'Keep Talking and Nobody Explodes','キープトーキングアンドノーバディエクスプローズ',2,4,'oc','PSXN','coop'],[77,'We Were Here Together','ウィーウェアヒアトゥゲザー',2,2,'o','PSX','coop'],[78,'Escape Simulator','エスケープシミュレーター',1,8,'o','P','coop'],[79,'A Way Out','アウェイアウト',2,2,'oc','PSX','coop'],[80,'The Past Within','ザパストウィズイン',2,2,'o','PSXNM','coop'],[81,'World War Z','ワールドウォーZ',1,4,'o','PSX','act'],[82,'PAYDAY 2','ペイデイ2',1,4,'o','P','act']
 ];
+// crossplay across platforms (approximate)
+const CP=new Set([2,5,18,21,22,23,24,25,26,27,28,30,31,37,38,44,45,48,49,52,58,59,60,62,66,68,72]);
+const PFS='PSXNM';const cleanPf=v=>[...PFS].filter(x=>String(v||'').includes(x)).join('');
 const COL=['#ff4d3d','#2f5bff','#e09a00','#0f9d6b','#e0459b','#7a5cff','#0aa2c0','#8a5a2b'];
 const byId=new Map(P.map(g=>[g[0],g]));
 const norm=s=>String(s).normalize('NFKC').toLowerCase().replace(/[\s\-_:・!?.,'’"()〜~]/g,'');
@@ -305,7 +315,7 @@ const b64e=s=>{let b='';for(const x of new TextEncoder().encode(s))b+=String.fro
 const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s);return new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))};
 function encode(p){
   let bits=0n;for(const id of p.owned)if(byId.has(id))bits|=1n<<BigInt(id);
-  return 'GT1.'+b64e(p.name||'')+'.'+bits.toString(36)+'.'+(p.custom.length?b64e(JSON.stringify(p.custom)):'')+(p.uid?'.'+p.uid:'');
+  return 'GT1.'+b64e(p.name||'')+'.'+bits.toString(36)+'.'+(p.custom.length?b64e(JSON.stringify(p.custom)):'')+(p.uid?'.'+p.uid+(p.pf?'.'+p.pf:''):'');
 }
 function cleanCustom(a){
   if(!Array.isArray(a))return [];
@@ -314,28 +324,28 @@ function cleanCustom(a){
     return [x[0].trim().slice(0,60),mn,mx,['o','c','oc'].includes(x[3])?x[3]:'oc']});
 }
 function decode(text){
-  const m=String(text).match(/GT1\.([A-Za-z0-9_-]*)\.([0-9a-z]*)\.([A-Za-z0-9_-]*)(?:\.([0-9a-z]{6,12}))?/);
+  const m=String(text).match(/GT1\.([A-Za-z0-9_-]*)\.([0-9a-z]*)\.([A-Za-z0-9_-]*)(?:\.([0-9a-z]{6,12})(?:\.([PSXNM]{1,5}))?)?/);
   if(!m)return null;
   try{
     const name=b64d(m[1]).slice(0,20);
     let bits=0n;for(const ch of m[2])bits=bits*36n+BigInt(parseInt(ch,36));
     const owned=P.map(g=>g[0]).filter(id=>(bits>>BigInt(id))&1n);
     const custom=m[3]?cleanCustom(JSON.parse(b64d(m[3]))):[];
-    return {name,owned,custom,uid:m[4]||'',code:m[0]};
+    return {name,owned,custom,uid:m[4]||'',pf:cleanPf(m[5]),code:m[0]};
   }catch(e){return null}
 }
 function gamesOf(p){
   const out=new Map();
-  for(const id of p.owned){const g=byId.get(id);if(g)out.set('p'+id,{t:g[1],mn:g[3],mx:g[4],m:g[5],pf:g[6],ge:g[7]})}
+  for(const id of p.owned){const g=byId.get(id);if(g)out.set('p'+id,{t:g[1],mn:g[3],mx:g[4],m:g[5],pf:g[6],ge:g[7],cp:CP.has(id)})}
   for(const c of p.custom){const k=keyOf.get(norm(c[0]))||'c:'+norm(c[0]);if(out.has(k))continue;
     const g=k[0]==='p'?byId.get(+k.slice(1)):null;
-    out.set(k,g?{t:g[1],mn:g[3],mx:g[4],m:g[5],pf:g[6],ge:g[7]}:{t:c[0],mn:c[1],mx:c[2],m:c[3],pf:'',ge:'act'})}
+    out.set(k,g?{t:g[1],mn:g[3],mx:g[4],m:g[5],pf:g[6],ge:g[7],cp:CP.has(g[0])}:{t:c[0],mn:c[1],mx:c[2],m:c[3],pf:'',ge:'act'})}
   return out;
 }
 
-const SAMPLE=decode(encode({name:'ユウ（サンプル）',owned:[1,3,5,6,11,19,25,34,41,42],custom:[]}));
+const SAMPLE=decode(encode({name:'ユウ（サンプル）',owned:[1,3,5,6,11,19,25,34,41,42],custom:[],uid:'sample01',pf:'NP'}));
 const newUid=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>(b%36).toString(36)).join('');
-let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[],uid:newUid()},copied:'',friends:[],sel:[],mode:'all',ts:0,seeded:true,favorites:[]};
+let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[],uid:newUid(),pf:''},copied:'',friends:[],sel:[],mode:'all',ts:0,seeded:true,favorites:[]};
 let q='',armed=null,favoritesOnly=false;
 
 function friendObjs(){
@@ -351,6 +361,7 @@ function renderMe(){
   if(document.activeElement!==$('myname'))$('myname').value=S.me.name;
   $('mycode').value=encode(S.me);
   $('mycount').textContent=(S.me.owned.length+S.me.custom.length)+'本';
+  document.querySelectorAll('[data-pf]').forEach(b=>b.setAttribute('aria-pressed',String(S.me.pf.includes(b.dataset.pf))));
   $('seed').hidden=!(S.seeded&&S.me.owned.length);
   const stale=S.copied&&S.copied!==encode(S.me);
   if(stale){$('copymsg').textContent='棚が変わりました。もう一度コピーして送ると、相手の画面も最新になります。';$('copymsg').classList.add('stale')}
@@ -362,22 +373,34 @@ function renderWho(fs){
   $('sample').textContent=fs.some(f=>f.sample)?'サンプル表示中です。友達の棚コードを追加すると、実際の持ち物で比べられます。':'';
   return fs.filter(f=>sel.has(f.id));
 }
+const pfName=s=>[...s].map(x=>PF[x]).join(' / ');
+function platCheck(g,mem){
+  if(!g.pf)return {ok:true,via:''};
+  const known=mem.filter(m=>m.pf);
+  for(const m of known)if(![...m.pf].some(x=>g.pf.includes(x)))return {ok:false,why:m.name+'の機種では出ていません'};
+  if(known.length<2)return {ok:true,via:''};
+  if(g.cp)return {ok:true,via:'クロスプレイ対応'};
+  const common=[...g.pf].filter(x=>known.every(m=>m.pf.includes(x)));
+  if(common.length)return {ok:true,via:'機種: '+pfName(common.join(''))};
+  return {ok:false,why:'クロスプレイ非対応で、機種が別々です'};
+}
 function boxHtml(k,g,owners,tag,extra){
-  return `<article class="box ${g.ge}"><span class="tag" ${tag?'':'hidden'}>${esc(tag||'')}</span><h3>${esc(g.t)}</h3><div><div class="meta">${ppl(g)}・${modeTxt(g.m)}${g.pf?'<br>'+[...g.pf].map(x=>PF[x]).join(' / '):''}${extra?'<br>'+extra:''}</div><div class="own">${owners.map(o=>dot(o.name,o.c)).join('')}</div></div></article>`;
+  return `<article class="box ${g.ge}"><span class="tag" ${tag?'':'hidden'}>${esc(tag||'')}</span><h3>${esc(g.t)}</h3><div><div class="meta">${ppl(g)}・${modeTxt(g.m)}${extra?'<br>'+esc(extra):g.pf?'<br>'+pfName(g.pf):''}</div><div class="own">${owners.map(o=>dot(o.name,o.c)).join('')}</div></div></article>`;
 }
 function renderMatch(){
   const fs=friendObjs();const chosen=renderWho(fs);
-  const mem=[{name:S.me.name||'自分',c:0,g:gamesOf(S.me)},...chosen.map(f=>({name:f.data.name,c:f.c,g:gamesOf(f.data)}))];
+  const mem=[{name:S.me.name||'自分',c:0,pf:S.me.pf,g:gamesOf(S.me)},...chosen.map(f=>({name:f.data.name,c:f.c,pf:f.data.pf,g:gamesOf(f.data)}))];
   const n=mem.length;
   const keys=new Map();for(const m of mem)for(const [k,g] of m.g)if(!keys.has(k))keys.set(k,g);
   const okMode=g=>S.mode==='all'||g.m.includes(S.mode);
   const fits=g=>g.mn<=n&&g.mx>=n;
-  const tog=[],alm=[],ovr=[];
+  const tog=[],alm=[],ovr=[],bad=[];
   for(const [k,g] of keys){
     if(!okMode(g))continue;
     const own=mem.filter(m=>m.g.has(k));
-    if(own.length===n){(fits(g)?tog:ovr).push([k,g,own])}
-    else if(n>=2&&own.length===n-1&&fits(g))alm.push([k,g,own,mem.find(m=>!m.g.has(k))]);
+    const pc=platCheck(g,mem);
+    if(own.length===n){if(!fits(g))ovr.push([k,g,own]);else if(pc.ok)tog.push([k,g,own,pc.via]);else bad.push([k,g,own,pc.why])}
+    else if(n>=2&&own.length===n-1&&fits(g)&&pc.ok)alm.push([k,g,own,mem.find(m=>!m.g.has(k))]);
   }
   const sorter=(a,b)=>(b[1].mx===n)-(a[1].mx===n)||a[1].t.localeCompare(b[1].t,'ja');
   tog.sort(sorter);alm.sort(sorter);
@@ -385,12 +408,15 @@ function renderMatch(){
   if(n<2){
     $('mtitle').innerHTML='友達を選んでね';
     $('together').innerHTML='<div class="empty">上の友達をタップすると、みんなが持っていて人数も合うゲームがここに並びます。</div>';
-    $('almost').innerHTML='';$('over').innerHTML='';return;
+    $('almost').innerHTML='';$('over').innerHTML='';$('plat').innerHTML='';return;
   }
   $('mtitle').innerHTML=`${esc(names)}と遊べる <b>${tog.length}</b>本`;
-  $('together').innerHTML=tog.length?`<div class="grid">${tog.map(([k,g,o])=>boxHtml(k,g,o,g.mx===n?(n===2?'ふたり専用':'ぴったり'):'')).join('')}</div>`
+  $('together').innerHTML=tog.length?`<div class="grid">${tog.map(([k,g,o,via])=>boxHtml(k,g,o,g.mx===n?(n===2?'ふたり専用':'ぴったり'):'',via)).join('')}</div>`
     :'<div class="empty"><p>共通のゲームがまだ見つかりません。棚の登録内容や遊び方の絞り込みを見直してみてね。</p><div class="empty-actions"><a href="#my-shelf">自分の棚を見直す</a><a class="secondary" href="#friend-code">友達のコードを更新</a></div></div>';
   $('almost').innerHTML=alm.length?`<div class="sub"><h3>あと1人持っていれば遊べる</h3><div class="mini">${alm.map(([k,g,o,miss])=>`<div class="minibox"><i class="${g.ge}"></i><div><b>${esc(g.t)}</b><span>${esc(miss.name)}が未所持・${ppl(g)}</span></div></div>`).join('')}</div></div>`:'';
+  $('plat').innerHTML=bad.length?`<div class="sub"><h3>みんな持ってるけど機種が合わないかも</h3><div class="mini">${bad.map(([k,g,o,why])=>`<div class="minibox"><i class="${g.ge}"></i><div><b>${esc(g.t)}</b><span>${esc(why)}</span></div></div>`).join('')}</div></div>`:'';
+  const unknown=mem.filter(m=>!m.pf).map(m=>m.name);
+  if(unknown.length&&unknown.length<n)$('plat').insertAdjacentHTML('beforeend',`<p class="note" style="margin-top:16px">${esc(unknown.join('、'))}の機種が未登録なので、機種の違いはチェックしていません。</p>`);
   $('over').innerHTML=ovr.length?`<div class="sub"><h3>みんな持ってるけど人数が合わない</h3><div class="mini">${ovr.map(([k,g])=>`<div class="minibox"><i class="${g.ge}"></i><div><b>${esc(g.t)}</b><span>${ppl(g)}で遊ぶゲーム</span></div></div>`).join('')}</div></div>`:'';
 }
 function renderShelf(){
@@ -413,7 +439,7 @@ function renderShelf(){
   });
   const shelf=document.createDocumentFragment();
   for(const game of list){
-    const row=document.createElement('div');row.className='pick-row';
+    const row=document.createElement('div');row.className='pick-row'+(S.me.pf&&![...S.me.pf].some(x=>game[6].includes(x))?' off':'');
     const pick=document.createElement('button');pick.type='button';pick.className='pick';pick.dataset.g=game[0];
     pick.setAttribute('aria-pressed',String(own.has(game[0])));
     pick.title=G[game[7]]+'・'+(game[3]===game[4]?game[3]:game[3]+'〜'+game[4])+'人';
@@ -464,7 +490,7 @@ function save(){
 }
 function adopt(o){
   if(!o||typeof o!=='object'||!o.me)return;
-  const me={name:String(o.me.name||'').slice(0,20),owned:(o.me.owned||[]).filter(id=>byId.has(id)),custom:cleanCustom(o.me.custom),uid:/^[0-9a-z]{6,12}$/.test(o.me.uid||'')?o.me.uid:newUid()};
+  const me={name:String(o.me.name||'').slice(0,20),owned:(o.me.owned||[]).filter(id=>byId.has(id)),custom:cleanCustom(o.me.custom),uid:/^[0-9a-z]{6,12}$/.test(o.me.uid||'')?o.me.uid:newUid(),pf:cleanPf(o.me.pf)};
   const friends=(Array.isArray(o.friends)?o.friends:[]).filter(f=>f&&decode(f.code)).slice(0,50).map(f=>({id:String(f.id),name:String(f.name||''),code:String(f.code),uid:decode(f.code).uid,c:+f.c||1}));
   S={me,friends,copied:typeof o.copied==='string'?o.copied:'',sel:(o.sel||[]).map(String).filter(id=>friends.some(f=>f.id===id)),mode:['all','o','c'].includes(o.mode)?o.mode:'all',ts:+o.ts||0,seeded:!!o.seeded,favorites:Array.isArray(o.favorites)?o.favorites.map(Number).filter(id=>byId.has(id)):[]};
 }
@@ -484,6 +510,7 @@ $('copy').addEventListener('click',async()=>{
 $('q').addEventListener('input',e=>{q=e.target.value;renderShelf()});$('genreFilter').addEventListener('change',renderShelf);$('sortOrder').addEventListener('change',renderShelf);
 document.addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.pf){const x=t.dataset.pf;S.me.pf=cleanPf(S.me.pf.includes(x)?S.me.pf.replace(x,''):S.me.pf+x);save();render();return}
   if(t.dataset.fav){const id=+t.dataset.fav,index=S.favorites.indexOf(id);if(index<0)S.favorites.push(id);else S.favorites.splice(index,1);save();renderShelf();return}
   if(t.id==='favOnly'){favoritesOnly=!favoritesOnly;t.setAttribute('aria-pressed',String(favoritesOnly));t.textContent=favoritesOnly?'★ お気に入りのみ表示中':'☆ お気に入りのみ';renderShelf();return}
   if(t.dataset.g){S.seeded=false;const id=+t.dataset.g;const i=S.me.owned.indexOf(id);i<0?S.me.owned.push(id):S.me.owned.splice(i,1);save();render();return}
@@ -534,7 +561,7 @@ window.addEventListener('hashchange',readInvite);
 $('restore').addEventListener('click',()=>{
   const d=decode($('rcode').value);const m=$('fmsg');
   if(!d){m.className='msg bad';m.textContent='自分のコードが読み取れませんでした。';return}
-  S.me={name:d.name,owned:d.owned,custom:d.custom,uid:d.uid||S.me.uid};S.seeded=false;$('rcode').value='';m.className='msg ok';m.textContent='自分の棚を復元しました。';save();render();
+  S.me={name:d.name,owned:d.owned,custom:d.custom,uid:d.uid||S.me.uid,pf:d.pf||S.me.pf};S.seeded=false;$('rcode').value='';m.className='msg ok';m.textContent='自分の棚を復元しました。';save();render();
 });
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));
