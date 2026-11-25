@@ -61,6 +61,16 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .sample-note{padding:10px 12px;border-radius:10px;background:var(--panel)}
 .howto{padding-top:20px;padding-bottom:20px}.howto a{color:var(--band);font-weight:700;text-underline-offset:2px}.howto-card{border:1.5px solid var(--line);background:var(--panel);border-radius:18px;padding:18px 20px}.howto-card h2{font-size:22px}.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 8px;padding:0;list-style:none}.steps li{display:grid;grid-template-columns:32px 1fr;gap:9px;align-items:start}.step-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--band);color:#fff;font-weight:800}.steps b{display:block}.steps span{font-size:14px;color:var(--mute)}.shelf-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,.7fr) minmax(150px,.75fr) minmax(170px,.75fr);gap:8px;margin-top:10px}.shelf-toolbar input,.shelf-toolbar select{width:100%}.shelf-filter{display:grid;gap:4px;align-content:end}.favorite-filter{width:100%;padding:8px 12px;text-align:left;background:var(--panel)}.favorite-filter[aria-pressed=true]{background:#fff3cf;border-color:#e8b63d;color:#754900}.pick-row{display:inline-flex;align-items:stretch;gap:4px;max-width:100%}.pick-row .pick{flex:1;justify-content:flex-start;text-align:left;max-width:100%}.pick-row .pick span{overflow-wrap:anywhere}.favorite{min-width:42px;width:42px;padding:0;border-radius:10px;color:#8a5a00;font-size:20px;line-height:1}.favorite[aria-pressed=true]{background:#fff3cf;border-color:#e8b63d;color:#925d00}@media(max-width:600px){.steps{grid-template-columns:1fr;gap:10px}.howto-card{padding:16px}.shelf-toolbar{grid-template-columns:1fr 1fr}.shelf-toolbar label:first-child,.shelf-toolbar label:last-child,.shelf-filter{grid-column:1/-1}}
 .selected-hint{margin:6px 0 0}
+.seed{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff3cf;color:#5c3b00;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700}
+.seed[hidden],.invite[hidden]{display:none}
+.seed button{min-height:36px;font-size:13px;background:#fff;color:#5c3b00;border-color:#e8b63d}
+.stale{color:#b42318 !important;font-weight:700}
+.invite{background:var(--ink);color:var(--bg)}
+.invite .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.invite b{font-size:18px}
+.invite .acts{display:flex;gap:8px}
+.invite button{background:var(--band);color:#fff;border-color:var(--band)}
+.invite button.secondary{background:transparent;color:var(--bg);border-color:currentColor}
 .custom{align-items:end}
 .number-field{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--mute)}
 .number-field input{width:100%}
@@ -156,6 +166,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
         <input id="mycode" readonly aria-label="自分の棚コード">
         <button class="btn-main" id="copy" type="button">コピー</button>
       </div>
+      <div class="seed" id="seed" hidden><span>最初は例のゲームが入っています。持っていないものは外してから送ってね。</span><button type="button" id="clearSeed">例をすべて外す</button></div>
       <div class="note" id="copymsg">LINEやDiscordに送ると、相手がこのアプリに追加できます。棚を変更したらコードも送り直してください。</div>
       <div class="top-actions">
         <a href="#my-shelf">自分のゲームを選ぶ</a>
@@ -166,7 +177,8 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
 </header>
 
 <main>
-<section class="band howto" aria-labelledby="howto-title"><div class="wrap howto-card"><h2 id="howto-title">はじめての使い方</h2><ol class="steps"><li><span class="step-number" aria-hidden="true">1</span><div><b>自分の棚を作る</b><span><a href="#my-shelf">自分の棚</a>で持っているゲームをタップ。名前も入れると友達に伝わりやすいよ。</span></div></li><li><span class="step-number" aria-hidden="true">2</span><div><b>棚コードを友達に送る</b><span>上の<a href="#copy">「コピー」</a>を押してLINEやDiscordへ。友達にもコードを送ってもらおう。</span></div></li><li><span class="step-number" aria-hidden="true">3</span><div><b><a href="#friend-code">友達のコードを追加する</a></b><span>コードを貼って追加し、上で友達を選ぶと一緒に遊べるゲームが表示されます。</span></div></li></ol><p class="note">棚の変更後はコードをコピーし直して送り直してね。棚やお気に入りはこの端末のブラウザに保存されます。</p></div></section>
+<section class="band invite" id="invite" hidden aria-live="polite"><div class="wrap"><div><b id="inviteTitle"></b><div class="note" style="color:inherit;opacity:.8">追加すると、自分の棚と比べて一緒に遊べるゲームが表示されます。</div></div><div class="acts"><button type="button" id="inviteAdd">追加する</button><button type="button" class="secondary" id="inviteLater">あとで</button></div></div></section>
+<section class="band howto" aria-labelledby="howto-title"><div class="wrap howto-card"><h2 id="howto-title">はじめての使い方</h2><ol class="steps"><li><span class="step-number" aria-hidden="true">1</span><div><b>自分の棚を作る</b><span><a href="#my-shelf">自分の棚</a>で持っているゲームをタップ。名前も入れると友達に伝わりやすいよ。</span></div></li><li><span class="step-number" aria-hidden="true">2</span><div><b>棚コードを友達に送る</b><span>上の<a href="#copy">「コピー」</a>を押してLINEやDiscordへ。届いたリンクを開くだけで追加できます。</span></div></li><li><span class="step-number" aria-hidden="true">3</span><div><b><a href="#friend-code">友達のコードを追加する</a></b><span>コードを貼って追加し、上で友達を選ぶと一緒に遊べるゲームが表示されます。</span></div></li></ol><p class="note">棚の変更後はコードをコピーし直して送り直してね。棚やお気に入りはこの端末のブラウザに保存されます。</p></div></section>
 <section class="band">
   <div class="wrap">
     <h2 style="font-size:20px">だれと遊ぶ？</h2>
@@ -207,7 +219,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
       <h2>友達を追加<small id="fcount"></small></h2>
       <p class="note card-intro">友達にもこのページで棚コードをコピーしてもらい、ここに貼り付けます。同じ名前のコードを貼り直すと棚が更新されます。</p>
       <form id="fform">
-        <div class="row"><textarea id="fcode" rows="2" style="flex:1 1 100%;resize:vertical" placeholder="GT1. から始まるコードを貼り付け" aria-label="友達の棚コード"></textarea></div>
+        <div class="row"><textarea id="fcode" rows="2" style="flex:1 1 100%;resize:vertical" placeholder="届いたリンクかコード（GT1.〜）を貼り付け" aria-label="友達の棚コード"></textarea></div>
         <div class="row"><button type="submit" class="btn-main" style="flex:1">友達を追加</button></div>
       </form>
       <div class="msg" id="fmsg" role="status" aria-live="polite"></div>
@@ -293,7 +305,7 @@ const b64e=s=>{let b='';for(const x of new TextEncoder().encode(s))b+=String.fro
 const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s);return new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))};
 function encode(p){
   let bits=0n;for(const id of p.owned)if(byId.has(id))bits|=1n<<BigInt(id);
-  return 'GT1.'+b64e(p.name||'')+'.'+bits.toString(36)+'.'+(p.custom.length?b64e(JSON.stringify(p.custom)):'');
+  return 'GT1.'+b64e(p.name||'')+'.'+bits.toString(36)+'.'+(p.custom.length?b64e(JSON.stringify(p.custom)):'')+(p.uid?'.'+p.uid:'');
 }
 function cleanCustom(a){
   if(!Array.isArray(a))return [];
@@ -302,14 +314,14 @@ function cleanCustom(a){
     return [x[0].trim().slice(0,60),mn,mx,['o','c','oc'].includes(x[3])?x[3]:'oc']});
 }
 function decode(text){
-  const m=String(text).match(/GT1\.([A-Za-z0-9_-]*)\.([0-9a-z]*)\.([A-Za-z0-9_-]*)/);
+  const m=String(text).match(/GT1\.([A-Za-z0-9_-]*)\.([0-9a-z]*)\.([A-Za-z0-9_-]*)(?:\.([0-9a-z]{6,12}))?/);
   if(!m)return null;
   try{
     const name=b64d(m[1]).slice(0,20);
     let bits=0n;for(const ch of m[2])bits=bits*36n+BigInt(parseInt(ch,36));
     const owned=P.map(g=>g[0]).filter(id=>(bits>>BigInt(id))&1n);
     const custom=m[3]?cleanCustom(JSON.parse(b64d(m[3]))):[];
-    return {name,owned,custom,code:m[0]};
+    return {name,owned,custom,uid:m[4]||'',code:m[0]};
   }catch(e){return null}
 }
 function gamesOf(p){
@@ -322,7 +334,8 @@ function gamesOf(p){
 }
 
 const SAMPLE=decode(encode({name:'ユウ（サンプル）',owned:[1,3,5,6,11,19,25,34,41,42],custom:[]}));
-let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[]},friends:[],sel:[],mode:'all',ts:0,seeded:true,favorites:[]};
+const newUid=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>(b%36).toString(36)).join('');
+let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[],uid:newUid()},copied:'',friends:[],sel:[],mode:'all',ts:0,seeded:true,favorites:[]};
 let q='',armed=null,favoritesOnly=false;
 
 function friendObjs(){
@@ -338,6 +351,9 @@ function renderMe(){
   if(document.activeElement!==$('myname'))$('myname').value=S.me.name;
   $('mycode').value=encode(S.me);
   $('mycount').textContent=(S.me.owned.length+S.me.custom.length)+'本';
+  $('seed').hidden=!(S.seeded&&S.me.owned.length);
+  const stale=S.copied&&S.copied!==encode(S.me);
+  if(stale){$('copymsg').textContent='棚が変わりました。もう一度コピーして送ると、相手の画面も最新になります。';$('copymsg').classList.add('stale')}
 }
 function renderWho(fs){
   const sel=new Set(fs.some(f=>f.sample)?['sample']:S.sel);
@@ -440,7 +456,7 @@ for(const [id,name] of Object.entries(G)){const option=document.createElement('o
 // storage: this device, plus the viewer's private Claude storage when allowed
 const LS='gameshelf.v1';let ref=null,dbOk=true,timer=null,chain=Promise.resolve();
 function save(){
-  S.ts=Date.now();S.seeded=false;
+  S.ts=Date.now();
   try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
   clearTimeout(timer);
   timer=setTimeout(()=>{if(!ref||!dbOk)return;const body={json:JSON.stringify(S),ts:S.ts};
@@ -448,25 +464,29 @@ function save(){
 }
 function adopt(o){
   if(!o||typeof o!=='object'||!o.me)return;
-  const me={name:String(o.me.name||'').slice(0,20),owned:(o.me.owned||[]).filter(id=>byId.has(id)),custom:cleanCustom(o.me.custom)};
-  const friends=(Array.isArray(o.friends)?o.friends:[]).filter(f=>f&&decode(f.code)).slice(0,50).map(f=>({id:String(f.id),name:String(f.name||''),code:String(f.code),c:+f.c||1}));
-  S={me,friends,sel:(o.sel||[]).map(String).filter(id=>friends.some(f=>f.id===id)),mode:['all','o','c'].includes(o.mode)?o.mode:'all',ts:+o.ts||0,seeded:!!o.seeded,favorites:Array.isArray(o.favorites)?o.favorites.map(Number).filter(id=>byId.has(id)):[]};
+  const me={name:String(o.me.name||'').slice(0,20),owned:(o.me.owned||[]).filter(id=>byId.has(id)),custom:cleanCustom(o.me.custom),uid:/^[0-9a-z]{6,12}$/.test(o.me.uid||'')?o.me.uid:newUid()};
+  const friends=(Array.isArray(o.friends)?o.friends:[]).filter(f=>f&&decode(f.code)).slice(0,50).map(f=>({id:String(f.id),name:String(f.name||''),code:String(f.code),uid:decode(f.code).uid,c:+f.c||1}));
+  S={me,friends,copied:typeof o.copied==='string'?o.copied:'',sel:(o.sel||[]).map(String).filter(id=>friends.some(f=>f.id===id)),mode:['all','o','c'].includes(o.mode)?o.mode:'all',ts:+o.ts||0,seeded:!!o.seeded,favorites:Array.isArray(o.favorites)?o.favorites.map(Number).filter(id=>byId.has(id)):[]};
 }
 try{const raw=localStorage.getItem(LS);if(raw)adopt(JSON.parse(raw))}catch(e){}
 
 // events
 $('myname').addEventListener('input',e=>{S.me.name=e.target.value.trim().slice(0,20);save();renderMe();renderMatch()});
 $('copy').addEventListener('click',async()=>{
-  const txt=`${S.me.name||'わたし'}のゲーム棚コード\n${encode(S.me)}\n\nこのページでコードを追加して、一緒に遊べるゲームを探そう：\nhttps://planet0527.github.io/p-d86e6a38bb/\n（「友達を追加」に貼り付けてね）`;
-  try{await navigator.clipboard.writeText(txt);$('copymsg').textContent='コピーしました！ そのまま相手に送ってね。'}
-  catch(e){$('mycode').focus();$('mycode').select();$('copymsg').textContent='選択した状態にしました。長押しまたは Ctrl+C でコピーしてね。'}
+  const code=encode(S.me);
+  const base=/^https?:$/.test(location.protocol)?location.origin+location.pathname:'https://planet0527.github.io/p-d86e6a38bb/';
+  const txt=`${S.me.name||'わたし'}のゲーム棚だよ！\nリンクを開くと、一緒に遊べるゲームがわかるよ：\n${base}#add=${code}`;
+  const warn=S.seeded&&S.me.owned.length?'（例のゲームが入ったままです。持っていないものは外してね）':'';
+  $('copymsg').classList.remove('stale');
+  try{await navigator.clipboard.writeText(txt);S.copied=code;save();$('copymsg').textContent='コピーしました！ そのまま相手に送ってね。'+warn}
+  catch(e){S.copied=code;save();$('mycode').value=txt.split('\n').pop();$('mycode').focus();$('mycode').select();$('copymsg').textContent='選択した状態にしました。長押しまたは Ctrl+C でコピーしてね。'}
 });
 $('q').addEventListener('input',e=>{q=e.target.value;renderShelf()});$('genreFilter').addEventListener('change',renderShelf);$('sortOrder').addEventListener('change',renderShelf);
 document.addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;
   if(t.dataset.fav){const id=+t.dataset.fav,index=S.favorites.indexOf(id);if(index<0)S.favorites.push(id);else S.favorites.splice(index,1);save();renderShelf();return}
   if(t.id==='favOnly'){favoritesOnly=!favoritesOnly;t.setAttribute('aria-pressed',String(favoritesOnly));t.textContent=favoritesOnly?'★ お気に入りのみ表示中':'☆ お気に入りのみ';renderShelf();return}
-  if(t.dataset.g){const id=+t.dataset.g;const i=S.me.owned.indexOf(id);i<0?S.me.owned.push(id):S.me.owned.splice(i,1);save();render();return}
+  if(t.dataset.g){S.seeded=false;const id=+t.dataset.g;const i=S.me.owned.indexOf(id);i<0?S.me.owned.push(id):S.me.owned.splice(i,1);save();render();return}
   if(t.dataset.cdel){S.me.custom.splice(+t.dataset.cdel,1);save();render();return}
   if(t.dataset.sel){const id=t.dataset.sel;if(id==='sample')return;const i=S.sel.indexOf(id);i<0?S.sel.push(id):S.sel.splice(i,1);save();renderMatch();return}
   if(t.dataset.mode){S.mode=t.dataset.mode;document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));save();renderMatch();return}
@@ -478,28 +498,48 @@ document.addEventListener('click',e=>{
 $('cform').addEventListener('submit',e=>{
   e.preventDefault();const t=$('ct').value.trim();if(!t)return;
   const k=keyOf.get(norm(t));
+  S.seeded=false;
   if(k){const id=+k.slice(1);if(!S.me.owned.includes(id))S.me.owned.push(id)}
   else if(!S.me.custom.some(c=>norm(c[0])===norm(t)))S.me.custom.push(...cleanCustom([[t,$('cmin').value,$('cmax').value,$('cmode').value]]));
   $('ct').value='';save();render();
 });
+const isSelf=d=>(d.uid&&d.uid===S.me.uid)||d.code===encode(S.me);
+function addFriend(d){
+  const nm=d.name||'名無し',n=d.owned.length+d.custom.length;
+  let ex=d.uid?S.friends.find(f=>f.uid===d.uid):null;
+  if(!ex)ex=S.friends.find(f=>norm(f.name)===norm(nm)&&(!f.uid||!d.uid));
+  if(ex){ex.code=d.code;ex.name=nm;ex.uid=d.uid||ex.uid;if(!S.sel.includes(ex.id))S.sel=[ex.id];save();render();return nm+'の棚を更新しました（'+n+'本）'}
+  const used=new Set(S.friends.map(f=>f.c));let c=1;while(used.has(c)&&c<COL.length-1)c++;
+  const id='f'+Date.now().toString(36);S.friends.push({id,name:nm,code:d.code,uid:d.uid,c});S.sel=[id];save();render();
+  return nm+'を追加しました（'+n+'本）';
+}
 $('fform').addEventListener('submit',e=>{
   e.preventDefault();const d=decode($('fcode').value);const m=$('fmsg');
   if(!d){m.className='msg bad';m.textContent='コードが読み取れませんでした。GT1. から始まる部分が全部入っているか確認してね。';return}
-  if(d.code===encode(S.me)){m.className='msg bad';m.textContent='これは自分のコードみたい。相手のコードを貼ってね。';return}
-  const nm=d.name||'名無し';const ex=S.friends.find(f=>norm(f.name)===norm(nm));
-  if(ex){ex.code=d.code;m.textContent=nm+'の棚を更新しました（'+(d.owned.length+d.custom.length)+'本）'}
-  else{const used=new Set(S.friends.map(f=>f.c));let c=1;while(used.has(c)&&c<COL.length-1)c++;
-    const id='f'+Date.now().toString(36);S.friends.push({id,name:nm,code:d.code,c});S.sel.push(id);m.textContent=nm+'を追加しました（'+(d.owned.length+d.custom.length)+'本）'}
-  m.className='msg ok';$('fcode').value='';save();render();
+  if(isSelf(d)){m.className='msg bad';m.textContent='これは自分のコードみたい。相手のコードを貼ってね。';return}
+  m.textContent=addFriend(d);m.className='msg ok';$('fcode').value='';
 });
+let pending=null;
+function readInvite(){
+  if(!location.hash.startsWith('#add='))return;
+  let d=null;try{d=decode(decodeURIComponent(location.hash.slice(5)))}catch(e){}
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  if(!d||isSelf(d))return;
+  pending=d;$('inviteTitle').textContent=(d.name||'友達')+'の棚（'+(d.owned.length+d.custom.length)+'本）が届きました';$('invite').hidden=false;
+}
+$('inviteAdd').addEventListener('click',()=>{if(!pending)return;const msg=addFriend(pending);pending=null;$('invite').hidden=true;$('fmsg').className='msg ok';$('fmsg').textContent=msg;$('mtitle').scrollIntoView?.({behavior:'smooth',block:'center'})});
+$('inviteLater').addEventListener('click',()=>{pending=null;$('invite').hidden=true});
+$('clearSeed').addEventListener('click',()=>{S.me.owned=[];S.seeded=false;save();render()});
+window.addEventListener('hashchange',readInvite);
 $('restore').addEventListener('click',()=>{
   const d=decode($('rcode').value);const m=$('fmsg');
   if(!d){m.className='msg bad';m.textContent='自分のコードが読み取れませんでした。';return}
-  S.me={name:d.name,owned:d.owned,custom:d.custom};$('rcode').value='';m.className='msg ok';m.textContent='自分の棚を復元しました。';save();render();
+  S.me={name:d.name,owned:d.owned,custom:d.custom,uid:d.uid||S.me.uid};S.seeded=false;$('rcode').value='';m.className='msg ok';m.textContent='自分の棚を復元しました。';save();render();
 });
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));
 render();
+readInvite();
 
 (async()=>{
   try{
