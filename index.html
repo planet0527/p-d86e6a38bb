@@ -81,7 +81,8 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .box .meta{font-size:13px;font-weight:700;position:relative;z-index:1;opacity:.95}
 .box .own{display:flex;margin-top:8px;position:relative;z-index:1}
 .box .own .dot{margin-right:-6px;border-color:rgba(255,255,255,.9)}
-.box .tag{position:absolute;top:10px;right:10px;z-index:1;background:rgba(255,255,255,.92);color:#1c1a1f;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
+.box .tag{position:relative;z-index:1;align-self:flex-start;background:rgba(255,255,255,.92);color:#1c1a1f;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px;margin-bottom:6px}
+.box .tag[hidden]{display:none}
 .coop{background:var(--coop)}.vs{background:var(--vs)}.party{background:var(--party)}.craft{background:var(--craft)}.act{background:var(--act)}
 .empty{border:2px dashed var(--line);border-radius:16px;padding:28px;text-align:center;color:var(--mute);margin-top:16px}
 .sub{margin-top:32px}
@@ -111,6 +112,8 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .list b{display:block;line-height:1.3}
 .list span{font-size:13px;color:var(--mute)}
 .list button{min-height:40px;padding:0 12px;font-size:14px}
+.delete-confirm{display:flex;flex-wrap:wrap;gap:6px}
+.delete-confirm button{white-space:nowrap}
 .warn{background:#d92d20 !important;color:#fff !important;border-color:#d92d20 !important}
 details{margin-top:16px}
 summary{cursor:pointer;font-weight:700;min-height:32px}
@@ -190,7 +193,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
       <p class="note card-intro">友達にもこのページで棚コードをコピーしてもらい、ここに貼り付けます。同じ名前のコードを貼り直すと棚が更新されます。</p>
       <form id="fform">
         <div class="row"><textarea id="fcode" rows="2" style="flex:1 1 100%;resize:vertical" placeholder="GT1. から始まるコードを貼り付け" aria-label="友達の棚コード"></textarea></div>
-        <div class="row"><button type="submit" class="btn-main" style="flex:1">フレンドに追加</button></div>
+        <div class="row"><button type="submit" class="btn-main" style="flex:1">友達を追加</button></div>
       </form>
       <div class="msg" id="fmsg" role="status" aria-live="polite"></div>
       <ul class="list" id="flist"></ul>
@@ -348,8 +351,8 @@ function renderMatch(){
   tog.sort(sorter);alm.sort(sorter);
   const names=mem.slice(1).map(m=>m.name).join('、');
   if(n<2){
-    $('mtitle').innerHTML='フレンドを選んでね';
-    $('together').innerHTML='<div class="empty">上のフレンドをタップすると、みんなが持っていて人数も合うゲームがここに並びます。</div>';
+    $('mtitle').innerHTML='友達を選んでね';
+    $('together').innerHTML='<div class="empty">上の友達をタップすると、みんなが持っていて人数も合うゲームがここに並びます。</div>';
     $('almost').innerHTML='';$('over').innerHTML='';return;
   }
   $('mtitle').innerHTML=`${esc(names)}と遊べる <b>${tog.length}</b>本`;
@@ -370,7 +373,10 @@ function renderFriends(){
   const mine=gamesOf(S.me);
   $('fcount').textContent=S.friends.length?S.friends.length+'人':'';
   $('flist').innerHTML=S.friends.length?S.friends.map(f=>{const d=decode(f.code);if(!d)return '';const g=gamesOf(d);let c=0;for(const k of g.keys())if(mine.has(k))c++;
-    return `<li>${dot(d.name,f.c)}<div><b>${esc(d.name)}</b><span>${g.size}本・共通 ${c}本</span></div><button type="button" data-fdel="${esc(f.id)}" class="${armed===f.id?'warn':''}">${armed===f.id?'本当に削除':'削除'}</button></li>`}).join('')
+    const actions=armed===f.id
+      ?`<div class="delete-confirm" role="group" aria-label="${esc(d.name)}の削除確認"><button type="button" data-fcancel>キャンセル</button><button type="button" class="warn" data-fconfirm="${esc(f.id)}">削除する</button></div>`
+      :`<button type="button" data-fdel="${esc(f.id)}" aria-label="${esc(d.name)}を削除">削除</button>`;
+    return `<li>${dot(d.name,f.c)}<div><b>${esc(d.name)}</b><span>${g.size}本・共通 ${c}本</span></div>${actions}</li>`}).join('')
     :'<li><div><b>まだいません</b><span>相手にもこのページを開いてもらい、棚コードを送ってもらおう</span></div></li>';
 }
 function render(){renderMe();renderMatch();renderShelf();renderFriends()}
@@ -395,7 +401,7 @@ try{const raw=localStorage.getItem(LS);if(raw)adopt(JSON.parse(raw))}catch(e){}
 // events
 $('myname').addEventListener('input',e=>{S.me.name=e.target.value.trim().slice(0,20);save();renderMe();renderMatch()});
 $('copy').addEventListener('click',async()=>{
-  const txt=`${S.me.name||'わたし'}のゲーム棚コード\n${encode(S.me)}\n（ゲーム棚シェアの「フレンド」に貼ってね）`;
+  const txt=`${S.me.name||'わたし'}のゲーム棚コード\n${encode(S.me)}\n（ゲーム棚シェアの「友達を追加」に貼り付けてね）`;
   try{await navigator.clipboard.writeText(txt);$('copymsg').textContent='コピーしました！ そのまま相手に送ってね。'}
   catch(e){$('mycode').focus();$('mycode').select();$('copymsg').textContent='選択した状態にしました。長押しまたは Ctrl+C でコピーしてね。'}
 });
@@ -406,8 +412,9 @@ document.addEventListener('click',e=>{
   if(t.dataset.cdel){S.me.custom.splice(+t.dataset.cdel,1);save();render();return}
   if(t.dataset.sel){const id=t.dataset.sel;if(id==='sample')return;const i=S.sel.indexOf(id);i<0?S.sel.push(id):S.sel.splice(i,1);save();renderMatch();return}
   if(t.dataset.mode){S.mode=t.dataset.mode;document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));save();renderMatch();return}
-  if(t.dataset.fdel){const id=t.dataset.fdel;if(armed!==id){armed=id;renderFriends();return}
-    S.friends=S.friends.filter(f=>f.id!==id);S.sel=S.sel.filter(x=>x!==id);armed=null;save();render();return}
+  if(t.dataset.fdel){armed=t.dataset.fdel;renderFriends();return}
+  if(t.dataset.fcancel!==undefined){armed=null;renderFriends();return}
+  if(t.dataset.fconfirm){const id=t.dataset.fconfirm;S.friends=S.friends.filter(f=>f.id!==id);S.sel=S.sel.filter(x=>x!==id);armed=null;save();render();return}
   if(armed){armed=null;renderFriends()}
 });
 $('cform').addEventListener('submit',e=>{
