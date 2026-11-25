@@ -55,6 +55,7 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .top-actions a:hover,.empty-actions a:hover{filter:brightness(.94)}
 #ct{scroll-margin-top:16px}
 .sample-note{padding:10px 12px;border-radius:10px;background:var(--panel)}
+.howto{padding-top:20px;padding-bottom:20px}.howto-card{border:1.5px solid var(--line);background:var(--panel);border-radius:18px;padding:18px 20px}.howto-card h2{font-size:22px}.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 8px;padding:0;list-style:none;counter-reset:step}.steps li{counter-increment:step;display:grid;grid-template-columns:32px 1fr;gap:9px;align-items:start}.steps li:before{content:counter(step);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--band);color:#fff;font-weight:800}.steps b{display:block}.steps span{font-size:14px;color:var(--mute)}.shelf-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.52fr) minmax(170px,.65fr);gap:8px;margin-top:10px}.shelf-toolbar input,.shelf-toolbar select{width:100%}.pick-row{display:inline-flex;align-items:stretch;gap:4px;max-width:100%}.pick-row .pick{flex:1;justify-content:flex-start;text-align:left;max-width:100%}.pick-row .pick span{overflow-wrap:anywhere}.favorite{min-width:42px;width:42px;padding:0;border-radius:10px;color:#8a5a00;font-size:20px;line-height:1}.favorite[aria-pressed=true]{background:#fff3cf;border-color:#e8b63d;color:#925d00}@media(max-width:600px){.steps{grid-template-columns:1fr;gap:10px}.howto-card{padding:16px}.shelf-toolbar{grid-template-columns:1fr 1fr}.shelf-toolbar label:first-child,.shelf-toolbar label:last-child{grid-column:1/-1}}
 .selected-hint{margin:6px 0 0}
 .custom{align-items:end}
 .number-field{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--mute)}
@@ -161,6 +162,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
 </header>
 
 <main>
+<section class="band howto" aria-labelledby="howto-title"><div class="wrap howto-card"><h2 id="howto-title">はじめての使い方</h2><ol class="steps"><li><div><b>自分の棚を作る</b><span>「自分の棚」で持っているゲームをタップ。名前も入れると友達に伝わりやすいよ。</span></div></li><li><div><b>棚コードを友達に送る</b><span>上の「コピー」を押してLINEやDiscordへ。友達にもコードを送ってもらおう。</span></div></li><li><div><b>友達のコードを追加する</b><span>コードを貼って追加し、上で友達を選ぶと一緒に遊べるゲームが表示されます。</span></div></li></ol><p class="note">棚の変更後はコードをコピーし直して送り直してね。棚やお気に入りはこの端末のブラウザに保存されます。</p></div></section>
 <section class="band">
   <div class="wrap">
     <h2 style="font-size:20px">だれと遊ぶ？</h2>
@@ -184,8 +186,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
   <div class="wrap cols">
     <div class="card" id="my-shelf">
       <h2>自分の棚<small id="mycount"></small></h2>
-      <div class="row"><input id="q" type="search" placeholder="ゲーム名で検索" aria-label="ゲームを探す"></div>
-      <p class="note selected-hint">持っているゲームをタップしてチェック。チェック済みは棚に登録されています。</p>
+      <div class="shelf-toolbar"><label for="q">ゲーム名<input id="q" type="search" placeholder="例：マイクラ、It Takes Two" aria-label="ゲームを探す"></label><label for="genreFilter">ジャンル<select id="genreFilter" aria-label="ジャンルで絞り込む"><option value="all">すべて</option></select></label><label for="sortOrder">並び順<select id="sortOrder" aria-label="ゲームの並び順"><option value="popular">人気順</option><option value="recent">最近追加した順</option><option value="favorite">お気に入り優先</option><option value="name">名前順</option></select></label></div><p class="note selected-hint">名前や別名で検索できます。ジャンルで絞り込み、☆でお気に入り。ゲーム名を押すと所持状態が切り替わります。</p>
       <div class="shelf" id="shelf"></div>
       <h3 style="font-size:17px;margin-top:20px">リストにないゲームを追加</h3>
       <form class="custom" id="cform">
@@ -273,7 +274,8 @@ const P=[
 [47,'桃太郎電鉄2','桃鉄|ももてつ',1,4,'oc','PSXN','party'],
 [48,'Dead by Daylight','デッドバイデイライト|dbd',1,5,'o','PSXNM','vs'],
 [49,'Overwatch 2','オーバーウォッチ2|ow2',1,5,'o','PSXN','vs'],
-[50,'Lovers in a Dangerous Spacetime','ラバーズインアデンジャラススペースタイム',1,4,'c','PSXN','coop']
+[50,'Lovers in a Dangerous Spacetime','ラバーズインアデンジャラススペースタイム',1,4,'c','PSXN','coop'],
+[51,'PICO PARK 2','ピコパーク2',2,8,'oc','PN','party'],[52,'Party Animals','パーティーアニマルズ',1,8,'oc','PX','party'],[53,'PlateUp!','プレートアップ',1,4,'oc','PSXN','party'],[54,'Content Warning','コンテントワーニング',2,4,'o','P','act'],[55,'Sons Of The Forest','サンズオブザフォレスト',1,8,'o','P','craft'],[56,'Schedule I','スケジュールワン',1,4,'o','P','craft'],[57,'RV There Yet?','アールブイゼアイェット',1,4,'o','P','party'],[58,'No Man’s Sky','ノーマンズスカイ',1,4,'oc','PSXN','craft'],[59,'Rocket League','ロケットリーグ',1,8,'oc','PSXN','vs'],[60,'Marvel Rivals','マーベルライバルズ',1,6,'o','PSX','vs'],[61,'Counter-Strike 2','カウンターストライク2|cs2',1,10,'o','P','vs'],[62,'Destiny 2','デスティニー2',1,6,'o','PSX','act'],[63,'Pummel Party','パメルパーティー',1,8,'oc','P','party'],[64,'Risk of Rain 2','リスクオブレイン2|ror2',1,4,'oc','PSXN','act'],[65,'The Forest','ザフォレスト',1,8,'o','PS','craft'],[66,'Grounded 2','グラウンデッド2',1,4,'o','PX','craft'],[67,'Satisfactory','サティスファクトリー',1,4,'o','P','craft'],[68,'Warframe','ウォーフレーム',1,4,'o','PSXN','act'],[69,'Unrailed! 2: Back on Track','アンレイルド2',1,4,'oc','P','coop'],[70,'Dinkum','ディンカム',1,4,'o','P','craft'],[71,'Escape Simulator 2','エスケープシミュレーター2',1,8,'o','P','coop'],[72,'Brawlhalla','ブロウルハラ',1,8,'oc','PSXNM','vs'],[73,'Left 4 Dead 2','レフトフォーデッド2|l4d2',1,4,'o','P','act'],[74,'Team Fortress 2','チームフォートレス2|tf2',1,6,'o','P','vs'],[75,'Garry’s Mod','ギャリーズモッド|gmod',1,16,'o','P','party'],[76,'Keep Talking and Nobody Explodes','キープトーキングアンドノーバディエクスプローズ',2,4,'oc','PSXN','coop'],[77,'We Were Here Together','ウィーウェアヒアトゥゲザー',2,2,'o','PSX','coop'],[78,'Escape Simulator','エスケープシミュレーター',1,8,'o','P','coop'],[79,'A Way Out','アウェイアウト',2,2,'oc','PSX','coop'],[80,'The Past Within','ザパストウィズイン',2,2,'o','PSXNM','coop'],[81,'World War Z','ワールドウォーZ',1,4,'o','PSX','act'],[82,'PAYDAY 2','ペイデイ2',1,4,'o','P','act']
 ];
 const COL=['#ff4d3d','#2f5bff','#e09a00','#0f9d6b','#e0459b','#7a5cff','#0aa2c0','#8a5a2b'];
 const byId=new Map(P.map(g=>[g[0],g]));
@@ -316,7 +318,7 @@ function gamesOf(p){
 }
 
 const SAMPLE=decode(encode({name:'ユウ（サンプル）',owned:[1,3,5,6,11,19,25,34,41,42],custom:[]}));
-let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[]},friends:[],sel:[],mode:'all',ts:0,seeded:true};
+let S={me:{name:'',owned:[1,3,5,6,19,24],custom:[]},friends:[],sel:[],mode:'all',ts:0,seeded:true,favorites:[]};
 let q='',armed=null;
 
 function friendObjs(){
@@ -390,7 +392,18 @@ function renderFriends(){
     :'<li><div><b>まだいません</b><span>相手にもこのページを開いてもらい、棚コードを送ってもらおう</span></div></li>';
 }
 function render(){renderMe();renderMatch();renderShelf();renderFriends()}
+for(const [id,name] of Object.entries(G)){const option=document.createElement('option');option.value=id;option.textContent=name;$('genreFilter').append(option)}
 
+function renderShelf(){
+  const nq=norm(q),own=new Set(S.me.owned),fav=new Set(S.favorites||[]),genre=$('genreFilter').value,order=$('sortOrder').value;
+  const popular=[27,5,49,29,25,1,3,19,20,35,24,60,59,52,53,68,72,2,21,48],rank=new Map(popular.map((id,i)=>[id,i]));
+  const list=P.filter(g=>(!nq||norm(g[1]).includes(nq)||norm(g[2]).split('|').some(a=>a.includes(nq)))&&(genre==='all'||g[7]===genre));
+  list.sort((a,b)=>{if(order==='recent')return b[0]-a[0];if(order==='name')return a[1].localeCompare(b[1],'ja');if(order==='favorite')return (fav.has(b[0])-fav.has(a[0]))||((rank.get(a[0])??999)-(rank.get(b[0])??999))||a[1].localeCompare(b[1],'ja');return (rank.get(a[0])??999)-(rank.get(b[0])??999)||a[1].localeCompare(b[1],'ja')});
+  const frag=document.createDocumentFragment();
+  for(const g of list){const row=document.createElement('div');row.className='pick-row';const b=document.createElement('button');b.type='button';b.className='pick';b.dataset.g=g[0];b.setAttribute('aria-pressed',String(own.has(g[0])));b.title=G[g[7]]+'・'+(g[3]===g[4]?g[3]:g[3]+'〜'+g[4])+'人';const stripe=document.createElement('i');stripe.className=g[7];const title=document.createElement('span');title.textContent=g[1];b.append(stripe,title);const star=document.createElement('button');star.type='button';star.className='favorite';star.dataset.fav=g[0];star.setAttribute('aria-pressed',String(fav.has(g[0])));star.setAttribute('aria-label',g[1]+'をお気に入り'+(fav.has(g[0])?'から解除':'に追加'));star.textContent=fav.has(g[0])?'★':'☆';row.append(b,star);frag.append(row)}
+  if(!list.length){const empty=document.createElement('p');empty.className='note';empty.textContent='見つかりません。検索やジャンルを変えるか、下から手入力で追加できます。';frag.append(empty)}$('shelf').replaceChildren(frag);
+  const custom=document.createDocumentFragment();S.me.custom.forEach((c,i)=>{const li=document.createElement('li'),info=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span'),remove=document.createElement('button');b.textContent=c[0];span.textContent=ppl({mn:c[1],mx:c[2]})+'・'+modeTxt(c[3]);info.append(b,span);remove.type='button';remove.dataset.cdel=i;remove.textContent='外す';li.append(info,remove);custom.append(li)});$('clist').replaceChildren(custom);
+}
 // storage: this device, plus the viewer's private Claude storage when allowed
 const LS='gameshelf.v1';let ref=null,dbOk=true,timer=null,chain=Promise.resolve();
 function save(){
@@ -404,7 +417,7 @@ function adopt(o){
   if(!o||typeof o!=='object'||!o.me)return;
   const me={name:String(o.me.name||'').slice(0,20),owned:(o.me.owned||[]).filter(id=>byId.has(id)),custom:cleanCustom(o.me.custom)};
   const friends=(Array.isArray(o.friends)?o.friends:[]).filter(f=>f&&decode(f.code)).slice(0,50).map(f=>({id:String(f.id),name:String(f.name||''),code:String(f.code),c:+f.c||1}));
-  S={me,friends,sel:(o.sel||[]).map(String).filter(id=>friends.some(f=>f.id===id)),mode:['all','o','c'].includes(o.mode)?o.mode:'all',ts:+o.ts||0,seeded:!!o.seeded};
+  S={me,friends,sel:(o.sel||[]).map(String).filter(id=>friends.some(f=>f.id===id)),mode:['all','o','c'].includes(o.mode)?o.mode:'all',ts:+o.ts||0,seeded:!!o.seeded,favorites:Array.isArray(o.favorites)?o.favorites.map(Number).filter(id=>byId.has(id)):[]};
 }
 try{const raw=localStorage.getItem(LS);if(raw)adopt(JSON.parse(raw))}catch(e){}
 
@@ -415,7 +428,7 @@ $('copy').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(txt);$('copymsg').textContent='コピーしました！ そのまま相手に送ってね。'}
   catch(e){$('mycode').focus();$('mycode').select();$('copymsg').textContent='選択した状態にしました。長押しまたは Ctrl+C でコピーしてね。'}
 });
-$('q').addEventListener('input',e=>{q=e.target.value;renderShelf()});
+$('q').addEventListener('input',e=>{q=e.target.value;renderShelf()});$('genreFilter').addEventListener('change',renderShelf);$('sortOrder').addEventListener('change',renderShelf);
 document.addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;
   if(t.dataset.g){const id=+t.dataset.g;const i=S.me.owned.indexOf(id);i<0?S.me.owned.push(id):S.me.owned.splice(i,1);save();render();return}
@@ -450,6 +463,7 @@ $('restore').addEventListener('click',()=>{
   S.me={name:d.name,owned:d.owned,custom:d.custom};$('rcode').value='';m.className='msg ok';m.textContent='自分の棚を復元しました。';save();render();
 });
 
+document.addEventListener('click',e=>{const t=e.target.closest('button[data-fav]');if(!t)return;const id=+t.dataset.fav,i=S.favorites.indexOf(id);if(i<0)S.favorites.push(id);else S.favorites.splice(i,1);save();renderShelf()});
 document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===S.mode));
 render();
 
