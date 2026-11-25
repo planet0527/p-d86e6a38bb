@@ -4,7 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>ゲーム棚シェア</title>
+<title>ゲーム棚シェア｜友達と遊べるゲームを見つけよう</title>
+<meta name="description" content="持っているゲームを登録して棚コードを交換。みんなが持っているゲームから、一緒に遊べる一本を見つけよう。">
+<meta name="theme-color" content="#ff4d3d">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ゲーム棚シェア">
+<meta property="og:title" content="ゲーム棚シェア｜友達と遊べるゲームを見つけよう">
+<meta property="og:description" content="持っているゲームを登録して棚コードを交換。みんなが持っているゲームから、一緒に遊べる一本を見つけよう。">
+<meta property="og:url" content="https://planet0527.github.io/p-d86e6a38bb/">
+<meta property="og:image" content="https://planet0527.github.io/p-d86e6a38bb/social-preview.svg">
+<meta property="og:image:alt" content="赤と白のゲーム棚シェアのタイトルと、色とりどりのゲームカード">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -401,7 +411,7 @@ try{const raw=localStorage.getItem(LS);if(raw)adopt(JSON.parse(raw))}catch(e){}
 // events
 $('myname').addEventListener('input',e=>{S.me.name=e.target.value.trim().slice(0,20);save();renderMe();renderMatch()});
 $('copy').addEventListener('click',async()=>{
-  const txt=`${S.me.name||'わたし'}のゲーム棚コード\n${encode(S.me)}\n（ゲーム棚シェアの「友達を追加」に貼り付けてね）`;
+  const txt=`${S.me.name||'わたし'}のゲーム棚コード\n${encode(S.me)}\n\nこのページでコードを追加して、一緒に遊べるゲームを探そう：\nhttps://planet0527.github.io/p-d86e6a38bb/\n（「友達を追加」に貼り付けてね）`;
   try{await navigator.clipboard.writeText(txt);$('copymsg').textContent='コピーしました！ そのまま相手に送ってね。'}
   catch(e){$('mycode').focus();$('mycode').select();$('copymsg').textContent='選択した状態にしました。長押しまたは Ctrl+C でコピーしてね。'}
 });
