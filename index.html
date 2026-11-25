@@ -24,7 +24,7 @@ h1,h2,h3{font-family:"M PLUS Rounded 1c",system-ui,sans-serif;font-weight:800;li
 .wrap{max-width:1240px;margin:0 auto}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);padding:0 16px;font-weight:700}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--vs);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--vs);outline-offset:2px}
 input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:8px 12px}
 .top{background:var(--band);color:var(--bandink)}
 .top .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:end}
@@ -39,6 +39,29 @@ input,select,textarea{font-size:16px;min-height:44px;border:1.5px solid var(--li
 .me .btn-main{background:#1c1a1f;color:#fff;border-color:#1c1a1f;white-space:nowrap}
 .note{font-size:13px;color:var(--mute)}
 .me .note{color:#6b6670}
+.top-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.top-actions a,.empty-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1.5px solid #1c1a1f;border-radius:12px;background:#1c1a1f;color:#fff;text-decoration:none;font-weight:700}
+.top-actions a.secondary,.empty-actions a.secondary{background:transparent;color:#1c1a1f}
+.top-actions a:hover,.empty-actions a:hover{filter:brightness(.94)}
+#ct{scroll-margin-top:16px}
+.sample-note{padding:10px 12px;border-radius:10px;background:var(--panel)}
+.selected-hint{margin:6px 0 0}
+.custom{align-items:end}
+.number-field{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--mute)}
+.number-field input{width:100%}
+.empty p{margin:0}
+.empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.empty-actions a{font-size:14px}
+.card-intro{margin:6px 0 0}
+#friend-code{scroll-margin-top:16px}
+#my-shelf{scroll-margin-top:16px}
+@media(max-width:600px){
+  .top-actions a{flex:1 1 100%}
+  .card{padding:16px;border-radius:16px}
+  .custom{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .custom>#ct,.custom>button{grid-column:1/-1}
+  .number-field{font-size:12px}
+}
 .who{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
 .chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:0 16px 0 8px}
 .chip .dot{width:24px;height:24px}
@@ -115,7 +138,11 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
         <input id="mycode" readonly aria-label="自分の棚コード">
         <button class="btn-main" id="copy" type="button">コピー</button>
       </div>
-      <div class="note" id="copymsg">LINEやDiscordに貼って送ってね。棚を変えたら送り直すと最新になります。</div>
+      <div class="note" id="copymsg">LINEやDiscordに送ると、相手がこのアプリに追加できます。棚を変更したらコードも送り直してください。</div>
+      <div class="top-actions">
+        <a href="#my-shelf">自分のゲームを選ぶ</a>
+        <a class="secondary" href="#friend-code">友達のコードを追加</a>
+      </div>
     </div>
   </div>
 </header>
@@ -133,7 +160,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
         <button type="button" data-mode="c" aria-pressed="false">同じ画面</button>
       </div>
     </div>
-    <div id="sample" class="note" style="margin-top:6px"></div>
+    <div id="sample" class="note sample-note" style="margin-top:8px"></div>
     <div id="together"></div>
     <div id="almost"></div>
     <div id="over"></div>
@@ -142,29 +169,30 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
 
 <section class="band low">
   <div class="wrap cols">
-    <div class="card">
+    <div class="card" id="my-shelf">
       <h2>自分の棚<small id="mycount"></small></h2>
-      <div class="row"><input id="q" type="search" placeholder="ゲーム名で探す（例: マイクラ、overcooked）" aria-label="ゲームを探す"></div>
+      <div class="row"><input id="q" type="search" placeholder="ゲーム名で検索" aria-label="ゲームを探す"></div>
+      <p class="note selected-hint">持っているゲームをタップしてチェック。チェック済みは棚に登録されています。</p>
       <div class="shelf" id="shelf"></div>
       <h3 style="font-size:17px;margin-top:20px">リストにないゲームを追加</h3>
       <form class="custom" id="cform">
         <input id="ct" maxlength="60" placeholder="ゲーム名" aria-label="ゲーム名" required>
-        <input id="cmin" type="number" min="1" max="99" value="1" aria-label="最少人数">
-        <input id="cmax" type="number" min="1" max="99" value="4" aria-label="最大人数">
+        <label class="number-field" for="cmin">最少人数<input id="cmin" type="number" min="1" max="99" value="1" aria-label="最少人数"></label>
+        <label class="number-field" for="cmax">最大人数<input id="cmax" type="number" min="1" max="99" value="4" aria-label="最大人数"></label>
         <select id="cmode" aria-label="遊び方"><option value="o">オンライン</option><option value="c">同じ画面</option><option value="oc" selected>どちらも</option></select>
         <button type="submit" class="btn-main">追加</button>
       </form>
       <ul class="list" id="clist"></ul>
     </div>
 
-    <div class="card">
-      <h2>フレンド<small id="fcount"></small></h2>
-      <p class="note" style="margin:6px 0 0">相手から届いた棚コードを貼り付けて追加。同じ名前ならあとから貼り直すと更新されます。</p>
+    <div class="card" id="friend-code">
+      <h2>友達を追加<small id="fcount"></small></h2>
+      <p class="note card-intro">友達にもこのページで棚コードをコピーしてもらい、ここに貼り付けます。同じ名前のコードを貼り直すと棚が更新されます。</p>
       <form id="fform">
-        <div class="row"><textarea id="fcode" rows="2" style="flex:1 1 100%;resize:vertical" placeholder="GT1. から始まるコードをメッセージごと貼ってOK" aria-label="フレンドの棚コード"></textarea></div>
+        <div class="row"><textarea id="fcode" rows="2" style="flex:1 1 100%;resize:vertical" placeholder="GT1. から始まるコードを貼り付け" aria-label="友達の棚コード"></textarea></div>
         <div class="row"><button type="submit" class="btn-main" style="flex:1">フレンドに追加</button></div>
       </form>
-      <div class="msg" id="fmsg" aria-live="polite"></div>
+      <div class="msg" id="fmsg" role="status" aria-live="polite"></div>
       <ul class="list" id="flist"></ul>
       <details>
         <summary>別の端末に自分の棚を引っ越す</summary>
@@ -174,7 +202,7 @@ summary{cursor:pointer;font-weight:700;min-height:32px}
     </div>
   </div>
 </section>
-<p class="band foot wrap" id="savestate">人数と遊び方は目安です。機種が違うとクロスプレイ非対応の場合があります。</p>
+<p class="band foot wrap" id="savestate">登録した内容はこの端末のブラウザに保存されます。人数や遊び方は目安です。機種が違うと一緒に遊べない場合があります。</p>
 </main>
 
 <script>
@@ -296,7 +324,7 @@ function renderWho(fs){
   const sel=new Set(fs.some(f=>f.sample)?['sample']:S.sel);
   $('who').innerHTML=`<span class="chip" style="border:1.5px solid var(--line);min-height:44px">${dot(S.me.name||'自分',0)}${esc(S.me.name||'自分')}</span>`+
     fs.map(f=>`<button type="button" class="chip" data-sel="${esc(f.id)}" aria-pressed="${sel.has(f.id)}">${dot(f.data.name,f.c)}${esc(f.data.name)}</button>`).join('');
-  $('sample').textContent=fs.some(f=>f.sample)?'いまはサンプルのフレンドで表示中。相手のコードを追加すると入れ替わります。':'';
+  $('sample').textContent=fs.some(f=>f.sample)?'サンプル表示中です。友達の棚コードを追加すると、実際の持ち物で比べられます。':'';
   return fs.filter(f=>sel.has(f.id));
 }
 function boxHtml(k,g,owners,tag,extra){
@@ -326,7 +354,7 @@ function renderMatch(){
   }
   $('mtitle').innerHTML=`${esc(names)}と遊べる <b>${tog.length}</b>本`;
   $('together').innerHTML=tog.length?`<div class="grid">${tog.map(([k,g,o])=>boxHtml(k,g,o,g.mx===n?(n===2?'ふたり専用':'ぴったり'):'')).join('')}</div>`
-    :'<div class="empty">共通のゲームが見つかりませんでした。下の「あと1人持っていれば」をチェック！</div>';
+    :'<div class="empty"><p>共通のゲームがまだ見つかりません。棚の登録内容や遊び方の絞り込みを見直してみてね。</p><div class="empty-actions"><a href="#my-shelf">自分の棚を見直す</a><a class="secondary" href="#friend-code">友達のコードを更新</a></div></div>';
   $('almost').innerHTML=alm.length?`<div class="sub"><h3>あと1人持っていれば遊べる</h3><div class="mini">${alm.map(([k,g,o,miss])=>`<div class="minibox"><i class="${g.ge}"></i><div><b>${esc(g.t)}</b><span>${esc(miss.name)}が未所持・${ppl(g)}</span></div></div>`).join('')}</div></div>`:'';
   $('over').innerHTML=ovr.length?`<div class="sub"><h3>みんな持ってるけど人数が合わない</h3><div class="mini">${ovr.map(([k,g])=>`<div class="minibox"><i class="${g.ge}"></i><div><b>${esc(g.t)}</b><span>${ppl(g)}で遊ぶゲーム</span></div></div>`).join('')}</div></div>`:'';
 }
@@ -335,7 +363,7 @@ function renderShelf(){
   const list=P.filter(g=>!nq||norm(g[1]).includes(nq)||norm(g[2]).includes(nq));
   list.sort((a,b)=>own.has(b[0])-own.has(a[0]));
   $('shelf').innerHTML=list.length?list.map(g=>`<button type="button" class="pick" data-g="${g[0]}" aria-pressed="${own.has(g[0])}" title="${G[g[7]]}・${g[3]===g[4]?g[3]:g[3]+'〜'+g[4]}人"><i class="${g[7]}"></i>${esc(g[1])}</button>`).join('')
-    :'<p class="note">見つかりません。下の「リストにないゲームを追加」から入れてね。</p>';
+    :'<p class="note">見つかりません。下から手入力で追加できます。</p>';
   $('clist').innerHTML=S.me.custom.map((c,i)=>`<li><div><b>${esc(c[0])}</b><span>${ppl({mn:c[1],mx:c[2]})}・${modeTxt(c[3])}</span></div><button type="button" data-cdel="${i}">外す</button></li>`).join('');
 }
 function renderFriends(){
